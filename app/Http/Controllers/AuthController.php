@@ -98,15 +98,16 @@ class AuthController extends Controller
         
         
         //$user = Users::where('email' , $email)->first();
-        $user = Users::find($email);
-        error_log($user);
+        $user = Users::where('email',$email)->first();
+        //$user->save;
+        //error_log($user);
         //error_log($user);
         //$user->save();
         //$user = Auth::user();
         //$token = $user->createToken('d')->plainTextToken;
 
-
-        $token = $user->createToken($email)->plainTextToken;
+            
+        $token = $user->CreateToken($email)->plainTextToken;
         
         $response = [
             'result' => "Logged in Succesfully",
