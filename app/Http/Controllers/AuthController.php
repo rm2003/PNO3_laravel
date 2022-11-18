@@ -11,6 +11,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use Illuminate\Support\Facades\Auth;
+
 use Validator;
 
 class AuthController extends Controller
@@ -95,9 +97,15 @@ class AuthController extends Controller
 
         
         
-        $user = Users::where('email' , $email)->first();
+        //$user = Users::where('email' , $email)->first();
+        $user = Users::find($email);
         error_log($user);
-        $user->save();
+        //error_log($user);
+        //$user->save();
+        //$user = Auth::user();
+        //$token = $user->createToken('d')->plainTextToken;
+
+
         $token = $user->createToken($email)->plainTextToken;
         
         $response = [
