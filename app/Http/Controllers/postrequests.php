@@ -44,22 +44,4 @@ class postrequests extends Controller
         }
     }
     
-    function login(Request $req)
-    {
-
-        $reqContent = json_decode($req->getContent(), true);
-        
-        $user= new Users;
-
-        $email =$reqContent['email'];
-        $hashed_password = password_hash($reqContent['password'], PASSWORD_DEFAULT);
-        $user->password=$hashed_password;
-
-        if($result){
-            return ["Result"=>"Data has been saved"];
-        }
-        else{
-            return ["Result"=>"Operation failed"];
-        }
-    }
 }

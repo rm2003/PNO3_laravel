@@ -95,10 +95,17 @@ class AuthController extends Controller
         error_log($info_over_user);
         if(error_log($info_over_user[0]["password"]) == $hashed_password){
 
-        
+        $rules = [
+                //'UserId' => 'required',
+                'email' => 'required|string',
+                //'licenseplate' => 'required|string',
+                'password' => 'required|string'    
+                ];
+    
+        $validator = Validator::make($reqContent, $rules);
         
         //$user = Users::where('email' , $email)->first();
-        $user = Users::where('email',$email)->first();
+        $user = Users::where('email', $reqContent['email'])->first();
         //$user->save;
         //error_log($user);
         //error_log($user);
@@ -107,7 +114,7 @@ class AuthController extends Controller
         //$token = $user->createToken('d')->plainTextToken;
 
             
-        $token = $user->CreateToken($email)->plainTextToken;
+        $token = $user->CreateToken($reqContent['email'])->plainTextToken;
         
         $response = [
             'result' => "Logged in Succesfully",

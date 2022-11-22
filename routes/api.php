@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\postrequests;
 use App\Http\Controllers\AuthController;
+use App\Models\Users;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,9 +27,25 @@ Route::post("login", [AuthController::class, 'login']);
 Route::post("register", [AuthController::class, 'register']);
 Route::post("add", [postrequests::class, 'add']);
 
+
+
+
+
 //Protected routes
 //routes in here are protected, if you want normal post request, you get 'unauthenticated' message back
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    
+    Route::post('/test', function () {
+
+        //$test = Users::all();
+        //$test = Users::orderBy('licenseplate', 'desc')->get();
+        //$test = Users::where('UserId', '5')->get();
+    
+        return "test";
+        //return $test;
+       // return view('test', );
+    });
+    
     
 
 });
