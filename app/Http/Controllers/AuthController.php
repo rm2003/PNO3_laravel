@@ -51,7 +51,7 @@ class AuthController extends Controller
     $input['token'] = getToken($token_length);
 
     
-    $rules = array('token' => 'unique:acces_tokens,token');
+    $rules = array('token' => 'unique:access_tokens,token');
 
     $validator = Validator::make($input, $rules);
 
@@ -100,8 +100,9 @@ class AuthController extends Controller
                 $user->UserId=1;
                 $user->email=$reqContent['email'];
                 $user->licenseplate=$reqContent['licenseplate'];
-                $hashed_password = $reqContent['password'];
-        //password_hash($reqContent['password'], PASSWORD_DEFAULT);
+                $password = $reqContent['password'];
+                $password_with_salt = $password . "3Iw54#yr" . $reqContent['email'];
+                $hashed_password = password_hash($password_with_salt, PASSWORD_BCRYPT);
                 $user->password=$hashed_password;
                 error_log($user);
                 $user->save();
@@ -151,10 +152,13 @@ class AuthController extends Controller
 
         $email = $reqContent['email'];
         $password = $reqContent['password'];
-        $hashed_password = $password;
+
+        $password_with_salt = $password . "3Iw54#yr" . $email;
+        $hashed_password = password_hash($password_with_salt, PASSWORD_BCRYPT);
 
         $info_over_user = Users::where('email',$email)->get();
         //error_log($info_over_user);
+
         if(error_log($info_over_user[0]["password"]) == $hashed_password){
 
         $rules = [
@@ -166,23 +170,48 @@ class AuthController extends Controller
     
         $validator = Validator::make($reqContent, $rules);
         
+        if ($validator->fails()) {
+            $response = [
+                'result' => "Pleas fill in all fields",
+                'token' => "abc"
+            ];
+
+            return $response;
+        }
+
         //$user = Users::where('email' , $email)->first();
-        $user = Users::where('email', $reqContent['email'])->first();
-        //$user->save;
-        //error_log($user);
-        //error_log($user);
-        //$user->save();
-        //$user = Auth::user();
-        //$token = $user->createToken('d')->plainTextToken;
+        //$user = Users::where('email', $reqContent['email'])->first();
 
         //$user->tokens()->delete();
         //$user->revoke();
         
-        $user->tokens()->where('name', $reqContent['email'])->delete();
+        //$user->tokens()->where('name', $reqContent['email'])->delete()
+        //$token = $user->CreateToken($reqContent['email'])->plainTextToken;
         
-        
-        $token = $user->CreateToken($reqContent['email'])->plainTextToken;
-        
+
+
+        $input['email'] = $email;    
+        $rules = array('email' => 'unique:access_tokens,email');
+
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            error_log("User was still in database access_tokens");
+            acces_tokens::where('email', $email)->delete();
+        }
+
+
+        $token = $this->create_token(64);
+        $date = date('d-m-y h:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
+
+
+        $accestoken = new acces_tokens;
+        $accestoken->email = $reqContent['email'];
+        $accestoken->token = $token;
+        $accestoken->last_used_at = $date;
+        $accestoken->created_at = $date;
+        $accestoken->save(); 
+
         $response = [
             'result' => "Logged in Succesfully",
             'token' => $token
@@ -191,11 +220,33 @@ class AuthController extends Controller
 
     }else{
         $response = [
-            'result' => "Logged in failed",
+            'result' => "Logged in failed: password is incorrect",
             'token' => "abc"
         ];
         return response($response, 201);
 
     }
     }
+
+
+    public function logout(Request $request){
+        $reqContent = json_decode($request->getContent(), true);
+        $email = $reqContent['email'];
+        $input['email'] = $email;    
+        $rules = array('email' => 'unique:access_tokens,email');
+
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            acces_tokens::where('email', $email)->delete();
+            $response = ['result' => 'Logged out succesfully'];
+            return response($response, 201);
+        }
+        else{
+            $response = ['result' => 'You are already logged out'];
+            return response($response, 201);
+        }
+
+    }
+
 }
