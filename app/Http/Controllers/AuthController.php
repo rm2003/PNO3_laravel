@@ -69,7 +69,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         
-        
+        error_log("REGISTER");
         error_log($request);
         $user= new Users;
 
