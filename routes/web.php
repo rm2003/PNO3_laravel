@@ -20,11 +20,19 @@ Route::get('/', function () {
 
 Route::get('/test', function () {
 
-    $test = Users::all();
+    //$test = Users::all();
     //$test = Users::orderBy('licenseplate', 'desc')->get();
     //$test = Users::where('UserId', '5')->get();
+    //$date = date('d-m-y h:i:s', strtotime('+ 1 hours'));
+    //return $date;
+
+    //$bytes = random_bytes(30);
+    //return var_dump(bin2hex($bytes));
 
 
-    return $test;
+
+
+
+    //return $test;
    // return view('test', );
 });

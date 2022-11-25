@@ -8,7 +8,7 @@ use App\Models\Users;
 class postrequests extends Controller
 {
     function add(Request $req)
-    {
+    { 
         error_log(gettype($req)); 
         error_log($req);  
         #$test = json_decode(strval($req->all()), true);
