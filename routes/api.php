@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\postrequests;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ResController;
 use App\Models\Users;
 
 /*
@@ -27,6 +28,7 @@ Route::post("login", [AuthController::class, 'login']);
 Route::post("register", [AuthController::class, 'register']);
 Route::post("logout", [AuthController::class, 'logout']);
 Route::post("add", [postrequests::class, 'add']);
+Route::post("check_availibility", [ResController::class, 'check_availibility']);
 
 
 

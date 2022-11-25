@@ -111,7 +111,7 @@ class AuthController extends Controller
                  
                 
                 $token = $this->create_token(64);
-                $date = date('d-m-y h:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
+                $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
 
                 $accestoken = new acces_tokens;
                 $accestoken->email = $reqContent['email'];
@@ -202,7 +202,7 @@ class AuthController extends Controller
 
 
         $token = $this->create_token(64);
-        $date = date('d-m-y h:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
+        $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
 
 
         $accestoken = new acces_tokens;
