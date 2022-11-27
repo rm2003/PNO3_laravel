@@ -29,6 +29,7 @@ Route::post("register", [AuthController::class, 'register']);
 Route::post("logout", [AuthController::class, 'logout']);
 Route::post("add", [postrequests::class, 'add']);
 Route::post("check_availibility", [ResController::class, 'check_availibility']);
+Route::post("reserve", [ResController::class, 'reserve']);
 
 
 
