@@ -88,13 +88,51 @@ class ResController extends Controller
             $diff_hours = ($date_end - $date_start)/(3600);
             error_log($diff_hours);
 
-            //$datestart = new DateTime($begin_jaar-$begin_maand-$begin_dag $begin_uur:$test:$test);//start time
-            //$dateteind = new DateTime($eind_jaar'-'$eind_maand'-'$eind_dag $eind_uur':00:00');//end time
+            $list_with_dates = array();
+
+            while($diff_hours >= 1){
+                $diff_hours = $diff_hours - 1;
+                $begin_uur = $begin_uur+1;
+
+                if($begin_uur == 24){
+
+                }
+
+                array_push($list_with_dates,"$begin_dag-$begin_maand-$begin_jaar $begin_uur");
+                
+            }
+            error_log(gettype($list_with_dates));
             
+            foreach($list_with_dates as $datum){
+                if(reservations::where('reservation_slot', '=', $datum)->get()->count() >= 5){
+                    $result = [
+                        'response' => "one or more timeslots not available"
+                    ];
+                    return response($result);
+                }
+            }
+
+            $info_about_user = Users::where('email', '=', $email)->get();
+            $licenseplate = $info_about_user[0]['licenseplate'];
+            
+            foreach($list_with_dates as $timeslot){
+
+            $reservation = new reservations;
+            $reservation->email = $email;
+            $reservation->licenseplate = $licenseplate;
+            $reservation->reservation_slot = $timeslot;
+            $reservation->save();
+
+            }
+
+            $result = [
+                'response' => "reservation succesfully made"
+            ];
+            return response($result);
         
         } else {
             $result = [
-                'validation' => $token_validation
+                'response' => $token_validation
             ];
             return respons($result);
         }
