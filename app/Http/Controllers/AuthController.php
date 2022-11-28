@@ -18,6 +18,7 @@ use Validator;
 use App\Http\Controllers\AuthController;
 class AuthController extends Controller
 {
+    //Function which creates a token
     public function create_token($token_length)
     {
     //token creation from: https://gist.github.com/ursuleacv/80d35b6b6d13fc8760ca
@@ -47,14 +48,15 @@ class AuthController extends Controller
         return $token;
     }
 
-    $token_before_check = getToken($token_length);
+    
+    //Create the token
     $input['token'] = getToken($token_length);
 
-    
+    //check if the token is not already in the database
     $rules = array('token' => 'unique:access_tokens,token');
-
     $validator = Validator::make($input, $rules);
 
+    //if token already in database, run the function again, if the token is unique, it gives the token back
     if ($validator->fails()) {
         return create_token($token_length);
     }
@@ -144,6 +146,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        error_log("LOGIN");
         error_log($request);
         error_log(gettype($request));
         $reqContent = json_decode($request->getContent(), true);
@@ -230,6 +233,7 @@ class AuthController extends Controller
 
 
     public function logout(Request $request){
+        error_log("LOGOUT");
         $reqContent = json_decode($request->getContent(), true);
         $email = $reqContent['email'];
         $input['email'] = $email;    
