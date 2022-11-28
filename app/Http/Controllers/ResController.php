@@ -62,6 +62,7 @@ class ResController extends Controller
         }
     }
 
+    //the function for making a reservation
     public function reserve(Request $request){
         error_log($request);
         $reqContent = json_decode($request->getContent(), true);
@@ -90,21 +91,32 @@ class ResController extends Controller
 
             $list_with_dates = array();
 
+            $date_for_dividation = $date_start;
+
+            //every hour between start and end date will be set in an array ($list_with_dates)
             while($diff_hours >= 1){
                 $diff_hours = $diff_hours - 1;
-                $begin_uur = $begin_uur+1;
 
-                if($begin_uur == 24){
+                //we will work with 2 types, 
+                //date for dividation is where is worked with, this is because strtotime +hour needs the minutes to see the hour as hour
+                //but we will not store in de database the minutes, only the hour, therefore is worked with the variable data for database
+                $date_for_dividation = date('Y-m-d H:i:s', strtotime($date_for_dividation. ' + 1 hours'));
+                $date_for_database = date('Y-m-d H', strtotime($date_for_dividation. ' + 1 hours'));
 
-                }
-
-                array_push($list_with_dates,"$begin_dag-$begin_maand-$begin_jaar $begin_uur");
+                //the dates will be added to the array
+                array_push($list_with_dates, $date_for_database);
                 
             }
             error_log(gettype($list_with_dates));
             
+
+            //this is the max places in the parking lot
+            $max_places = 5;
+
+            //first there will be checked that there is still place availible in the parkin lot
+            //if not give back that there is no place in one or more of the timeslots
             foreach($list_with_dates as $datum){
-                if(reservations::where('reservation_slot', '=', $datum)->get()->count() >= 5){
+                if(reservations::where('reservation_slot', '=', $datum)->get()->count() >= $max_places){
                     $result = [
                         'response' => "one or more timeslots not available"
                     ];
@@ -112,18 +124,20 @@ class ResController extends Controller
                 }
             }
 
+            //to add the licenseplate to a registration, we will get the licenseplate out of the users database
             $info_about_user = Users::where('email', '=', $email)->get();
             $licenseplate = $info_about_user[0]['licenseplate'];
-            
-            foreach($list_with_dates as $timeslot){
 
-            $reservation = new reservations;
-            $reservation->email = $email;
-            $reservation->licenseplate = $licenseplate;
-            $reservation->reservation_slot = $timeslot;
-            $reservation->save();
+            //for each hour between the start and end date (which is in the array), there will be a reservation made in the database
+            foreach($list_with_dates as $timeslot){
+                $reservation = new reservations;
+                $reservation->email = $email;
+                $reservation->licenseplate = $licenseplate;
+                $reservation->reservation_slot = $timeslot;
+                $reservation->save();
             }
 
+            //to let the user know the reservation is done, sent the confirmation back
             $result = [
                 'response' => "reservation succesfully made"
             ];
