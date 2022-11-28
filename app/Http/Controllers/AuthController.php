@@ -125,7 +125,7 @@ class AuthController extends Controller
                 
 
                 $response = [
-                'result' => "Registered Succesfully",
+                'result' => "Registered successfully",
                 'token' => $token
                  ];
                 
@@ -216,7 +216,7 @@ class AuthController extends Controller
         $accestoken->save(); 
 
         $response = [
-            'result' => "Logged in succesfully",
+            'result' => "Logged in successfully",
             'token' => $token
         ];
         return response($response, 201);
