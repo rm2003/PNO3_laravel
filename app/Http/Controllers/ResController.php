@@ -122,7 +122,6 @@ class ResController extends Controller
             $reservation->licenseplate = $licenseplate;
             $reservation->reservation_slot = $timeslot;
             $reservation->save();
-
             }
 
             $result = [
