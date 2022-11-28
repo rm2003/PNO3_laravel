@@ -20,7 +20,7 @@ use App\Http\Controllers\AuthController;
 
 class ResController extends Controller
 {
-    //function that gets 5 times and gives back how many reservations there are
+    //function that gets 5 dates+time and gives back how many reservations there are
     public function check_availibility(Request $request)
     {
         //Decode the json request
