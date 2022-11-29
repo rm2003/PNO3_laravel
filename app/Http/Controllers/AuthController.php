@@ -109,8 +109,8 @@ class AuthController extends Controller
                 error_log($user);
                 $user->save();
 
-                //$token = $user->createToken($reqContent['email'])->plainTextToken;
-                 
+                //This was how we made the token with sanctum
+                //$token = $user->createToken($reqContent['email'])->plainTextToken; 
                 
                 $token = $this->create_token(64);
                 $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
@@ -125,14 +125,13 @@ class AuthController extends Controller
                 
 
                 $response = [
-                'result' => "Registered successfully",
-                'token' => $token
+                    'result' => "Registered successfully",
+                    'token' => $token
                  ];
                 
                  return response($response, 201);
 
         }}else{
-            //dd($validator->errors()->all());
             error_log('Een van de parameters is niet correct');
             $response = [
                 'result' => "Something went wrong",
@@ -160,14 +159,13 @@ class AuthController extends Controller
         $hashed_password = password_hash($password_with_salt, PASSWORD_BCRYPT);
 
         $info_over_user = Users::where('email',$email)->get();
-        //error_log($info_over_user);
+        error_log($info_over_user);
 
-        if(error_log($info_over_user[0]["password"]) == $hashed_password){
+
+        if($info_over_user[0]["password"] == $hashed_password){
 
         $rules = [
-                //'UserId' => 'required',
                 'email' => 'required|string',
-                //'licenseplate' => 'required|string',
                 'password' => 'required|string'    
                 ];
     
@@ -179,22 +177,12 @@ class AuthController extends Controller
                 'token' => "abc"
             ];
 
-            return $response;
-        }
-
-        //$user = Users::where('email' , $email)->first();
-        //$user = Users::where('email', $reqContent['email'])->first();
-
-        //$user->tokens()->delete();
-        //$user->revoke();
-        
-        //$user->tokens()->where('name', $reqContent['email'])->delete()
-        //$token = $user->CreateToken($reqContent['email'])->plainTextToken;
-        
+            return response($response, 400);
+        }       
 
 
         $input['email'] = $email;    
-        $rules = array('email' => 'unique:access_tokens,email');
+        $rules = array('email' => 'unique:access_tokens, email');
 
         $validator = Validator::make($input, $rules);
 
@@ -219,14 +207,14 @@ class AuthController extends Controller
             'result' => "Logged in successfully",
             'token' => $token
         ];
-        return response($response, 201);
+        return response($response, 200);
 
     }else{
         $response = [
             'result' => "Logged in failed: password is incorrect",
             'token' => "abc"
         ];
-        return response($response, 201);
+        return response($response, 401);
 
     }
     }
@@ -244,11 +232,11 @@ class AuthController extends Controller
         if ($validator->fails()) {
             acces_tokens::where('email', $email)->delete();
             $response = ['result' => 'Logged out succesfully'];
-            return response($response, 201);
+            return response($response, 200);
         }
         else{
             $response = ['result' => 'You are already logged out'];
-            return response($response, 201);
+            return response($response, 400);
         }
 
     }
