@@ -79,7 +79,7 @@ class ResController extends Controller
             $result = [
                 'result' => "Pleas fill in all fields"
             ];
-            return response($result, 400)
+            return response($result, 400);
         }
     }
 
@@ -199,7 +199,7 @@ class ResController extends Controller
             $result = [
                 'result' => "Pleas fill in all fields"
             ];
-            return response($result, 400)
+            return response($result, 400);
         }
 
     }

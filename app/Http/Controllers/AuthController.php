@@ -151,6 +151,23 @@ class AuthController extends Controller
         $reqContent = json_decode($request->getContent(), true);
 
         //error_log($reqContent);
+        
+        $rules = [
+            'email' => 'required|string',
+            'password' => 'required|string'    
+            ];
+
+        $validator = Validator::make($reqContent, $rules);
+    
+        if ($validator->fails()) {
+            $response = [
+                'result' => "Pleas fill in all fields",
+                'token' => "abc"
+            ];
+
+            return response($response, 400);
+        }   
+
 
         $email = $reqContent['email'];
         $password = $reqContent['password'];
@@ -162,27 +179,11 @@ class AuthController extends Controller
         error_log($info_over_user);
 
 
-        if($info_over_user[0]["password"] == $hashed_password){
-
-        $rules = [
-                'email' => 'required|string',
-                'password' => 'required|string'    
-                ];
-    
-        $validator = Validator::make($reqContent, $rules);
-        
-        if ($validator->fails()) {
-            $response = [
-                'result' => "Pleas fill in all fields",
-                'token' => "abc"
-            ];
-
-            return response($response, 400);
-        }       
+        if(error_log($info_over_user[0]["password"]) == $hashed_password){            
 
 
         $input['email'] = $email;    
-        $rules = array('email' => 'unique:access_tokens, email');
+        $rules = array('email' => 'unique:access_tokens,email');
 
         $validator = Validator::make($input, $rules);
 
