@@ -31,10 +31,10 @@ class ResController extends Controller
             'token' => 'required|string',
             'email' => 'required|string',
             'timestamp1' => 'required|string',
-            'timestamp2' => 'required|string',
-            'timestamp3' => 'required|string',
-            'timestamp4' => 'required|string',  
-            'timestamp5' => 'required|string'
+            //'timestamp2' => 'required|string',
+            //'timestamp3' => 'required|string',
+            //'timestamp4' => 'required|string',  
+            //'timestamp5' => 'required|string'
             ];
 
         $validator = Validator::make($reqContent, $rules);
@@ -48,24 +48,24 @@ class ResController extends Controller
             $token_validation = app('App\Http\Controllers\request_validation')->token_validation($token, $email);
             if($token_validation = "Request validated"){
                 $timestamp1 = $reqContent['timestamp1'];
-                $timestamp2 = $reqContent['timestamp2'];
-                $timestamp3 = $reqContent['timestamp3'];
-                $timestamp4 = $reqContent['timestamp4'];
-                $timestamp5 = $reqContent['timestamp5'];
+                //$timestamp2 = $reqContent['timestamp2'];
+                //$timestamp3 = $reqContent['timestamp3'];
+                //$timestamp4 = $reqContent['timestamp4'];
+                //$timestamp5 = $reqContent['timestamp5'];
 
                 $count1 = reservations::where('reservation_slot', '=', $timestamp1)->get()->count();
-                $count2 = reservations::where('reservation_slot', '=', $timestamp2)->get()->count();
-                $count3 = reservations::where('reservation_slot', '=', $timestamp3)->get()->count();
-                $count4 = reservations::where('reservation_slot', '=', $timestamp4)->get()->count();
-                $count5 = reservations::where('reservation_slot', '=', $timestamp5)->get()->count();
+                //$count2 = reservations::where('reservation_slot', '=', $timestamp2)->get()->count();
+                //$count3 = reservations::where('reservation_slot', '=', $timestamp3)->get()->count();
+                //$count4 = reservations::where('reservation_slot', '=', $timestamp4)->get()->count();
+                //$count5 = reservations::where('reservation_slot', '=', $timestamp5)->get()->count();
 
                 $result = [
                     'validation' => $token_validation,
-                    'timestamp1' => $count1,
-                    'timestamp2' => $count2,
-                    'timestamp3' => $count3,
-                    'timestamp4' => $count4,
-                    'timestamp5' => $count5
+                    'timestamp1' => $count1
+                    //'timestamp2' => $count2,
+                    //'timestamp3' => $count3,
+                    //'timestamp4' => $count4,
+                    //'timestamp5' => $count5
                 ];
                 return response($result, 200);
             }
