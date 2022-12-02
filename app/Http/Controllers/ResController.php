@@ -23,6 +23,7 @@ class ResController extends Controller
     //function that gets 5 dates+time and gives back how many reservations there are
     public function check_availibility(Request $request)
     {
+        error_log("CHECHK AVAILIBILITY");
         //Decode the json request
         $reqContent = json_decode($request->getContent(), true);
         
@@ -30,7 +31,7 @@ class ResController extends Controller
         $rules = [
             'token' => 'required|string',
             'email' => 'required|string',
-            'timestamp1' => 'required|string',
+            'timestamp1' => 'required|string'
             //'timestamp2' => 'required|string',
             //'timestamp3' => 'required|string',
             //'timestamp4' => 'required|string',  
@@ -48,19 +49,21 @@ class ResController extends Controller
             $token_validation = app('App\Http\Controllers\request_validation')->token_validation($token, $email);
             if($token_validation = "Request validated"){
                 $timestamp1 = $reqContent['timestamp1'];
+                error_log($timestamp1);
                 //$timestamp2 = $reqContent['timestamp2'];
                 //$timestamp3 = $reqContent['timestamp3'];
                 //$timestamp4 = $reqContent['timestamp4'];
                 //$timestamp5 = $reqContent['timestamp5'];
 
                 $count1 = reservations::where('reservation_slot', '=', $timestamp1)->get()->count();
+                error_log($count1);
                 //$count2 = reservations::where('reservation_slot', '=', $timestamp2)->get()->count();
                 //$count3 = reservations::where('reservation_slot', '=', $timestamp3)->get()->count();
                 //$count4 = reservations::where('reservation_slot', '=', $timestamp4)->get()->count();
                 //$count5 = reservations::where('reservation_slot', '=', $timestamp5)->get()->count();
 
                 $result = [
-                    'validation' => $token_validation,
+                    'result' => $token_validation,
                     'timestamp1' => $count1
                     //'timestamp2' => $count2,
                     //'timestamp3' => $count3,

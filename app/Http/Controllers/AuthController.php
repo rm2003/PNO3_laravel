@@ -129,7 +129,7 @@ class AuthController extends Controller
 
         } //check that the password is long enough (longer than 5 characters)
          elseif(strlen($reqContent['password'])<5){
-            error_log("The password is not long enough")
+            error_log("The password is not long enough");
             $response = [
                 'result' => "Password is not long enough, please choos a longer one",
                 'token' => "abc"
@@ -192,9 +192,7 @@ class AuthController extends Controller
         error_log(gettype($request));
 
         //Because the request comes in as a json, the json needs to be decoded to see whats inside the json
-        //also a error log to see the inside of the json
         $reqContent = json_decode($request->getContent(), true);
-        error_log($reqContent);
         
         //this are rules which the request needs to fullfil
         //to make sure all the fields were filled in
