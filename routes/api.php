@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\postrequests;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ResController;
+use App\Http\Controllers\parking_inout;
 use App\Models\Users;
 
 /*
@@ -30,6 +31,7 @@ Route::post("logout", [AuthController::class, 'logout']);
 Route::post("add", [postrequests::class, 'add']);
 Route::post("check_availibility", [ResController::class, 'check_availibility']);
 Route::post("reserve", [ResController::class, 'reserve']);
+Route::post("driving_in", [parking_inout::class, 'driving_in']);
 
 
 

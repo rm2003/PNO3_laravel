@@ -72,7 +72,7 @@ class request_validation extends Controller
             
         }
         else {
-            return "Not logged in";
+            return "Not logged in, pleas log in";
         }
 
     }

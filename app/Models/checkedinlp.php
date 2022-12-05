@@ -10,5 +10,6 @@ use Illuminate\Notifications\Notifiable;
 class checkedinlp extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
+    protected $table="checkedinlp";
     public $timestamps=false;
 }
