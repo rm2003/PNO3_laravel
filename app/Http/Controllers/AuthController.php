@@ -77,11 +77,11 @@ class AuthController extends Controller
         error_log($request);
         error_log(gettype($request));
 
+        error_log("-1");
         //Because the request comes in as a json, the json needs to be decoded to see whats inside the json
         //also a error log to see the inside of the json
         $reqContent = json_decode($request->getContent(), true);
-        error_log($reqContent);
-        
+        error_log("test0");
         //this are rules which the request needs to fullfil
         //to make sure all the fields were filled in
         $rules = [
@@ -92,15 +92,16 @@ class AuthController extends Controller
 
         //the validator will checks the rules on the request
         $validator = Validator::make($reqContent, $rules);
-
+        
+        error_log("test1");
         //if the validator fails, which means not all the fields were filled in,
         //sent back to please fill in all the fields
         if ($validator->fails()) {
             $response = [
-                'result' => "Pleas fill in all fields",
+                'result' => "Please fill in all fields",
                 'token' => "abc"
             ];
-
+            error_log("Please fill in all fields ");
             return response($response, 400);
         }   
 
@@ -138,6 +139,7 @@ class AuthController extends Controller
             return response($response, 405);
          }//if all the checks passes put the user in the database
           else{
+            error_log("Starting with putting user in database");
             //create a new user in the Users database
             $user= new Users;
             //User id here was introduced to immidiatly delete all the test records
@@ -155,6 +157,7 @@ class AuthController extends Controller
             //save the users to the database
             $user->save();
 
+            error_log("User succesfully added to database");
             //This was how we made the token with sanctum, but not used in final product
             //$token = $user->createToken($reqContent['email'])->plainTextToken; 
                 
@@ -163,6 +166,7 @@ class AuthController extends Controller
             //gets the actual date the token was created
             $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
 
+            error_log("Starting with putting token in database");
             //put the created accestoken in the database so the registered user is automatically loged in
             $accestoken = new acces_tokens;
             $accestoken->email = $reqContent['email'];
@@ -171,6 +175,7 @@ class AuthController extends Controller
             $accestoken->created_at = $date;
             $accestoken->save(); 
 
+            error_log("token successfully in database");
             //if everything went correctly return that is was succesful with the token
             $response = [
                 'result' => "Registered successfully",

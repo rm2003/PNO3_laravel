@@ -25,22 +25,22 @@ class parking_inout extends Controller
             ];
         error_log("plaats-1");
         //the validator will checks the rules on the request
-        //$validator = Validator::make($reqContent, $rules);
+        $validator = Validator::make($reqContent, $rules);
         error_log("plaats0");
         //if the validator fails, which means not all the necessary content for the request was there
         //sent back to please make a valid request
-        /*
+        
         if ($validator->fails()) {
             $response = [
                 'result' => "Please make a valid request"
             ];
             error_log("Please make a valid request");
             return response($response, 400);
-        }   */
+        }   
         error_log("plaats1");
-        $reference_token = "am(!@8eyVgdCtAGa367agIZ+&Z2^sFImH&Pb!jfLp2+ZUrDXT6cIs7yK&2tHb(XQ";
+        $reference_token_in = "am(!@8eyVgdCtAGa367agIZ+&Z2^sFImH&Pb!jfLp2+ZUrDXT6cIs7yK&2tHb(XQ";
 
-        if ($reqContent["token"] = $reference_token){
+        if ($reqContent["token"] = $reference_token_in){
             error_log("plaats2");
             $licenseplate = $reqContent["licenseplate"];
             error_log($licenseplate);
@@ -79,4 +79,62 @@ class parking_inout extends Controller
             }
         }
     }
+
+    public function driving_out(Request $request){
+        error_log("DRIVING OUT");
+        $reqContent = json_decode($request->getContent(), true);
+        error_log(gettype($request));
+        //this are rules which the request needs to fullfil
+        //to make sure all the fields were filled in
+        //error_log($reqContent["token"]);
+        $rules = [
+            'token' => 'required|string',
+            'licenseplate' => 'required|string'    
+            ];
+        error_log("plaats-1");
+        //the validator will checks the rules on the request
+        $validator = Validator::make($reqContent, $rules);
+        error_log("plaats0");
+        //if the validator fails, which means not all the necessary content for the request was there
+        //sent back to please make a valid request
+        
+        if ($validator->fails()) {
+            $response = [
+                'result' => "Please make a valid request"
+            ];
+            error_log("Please make a valid request");
+            return response($response, 400);
+        }   
+        error_log("plaats1");
+        $reference_token_out = "+pF!H*EmsnRj!Ft3MTB)NtK2(fzjnMSY&Tpr8gPPB#rU+tN+u&jtfwV4chW65KH";
+
+        if ($reqContent["token"] = $reference_token_out){
+            error_log("plaats2");
+            $licenseplate = $reqContent["licenseplate"];
+            error_log($licenseplate);
+            if(strlen($licenseplate) == 9){
+                error_log("plaats3");
+                //Check if the user was logged in
+                if(checkedinlp::where('licenseplate', '=', $licenseplate)->exists()){
+                    $time_entered = checkedinlp::where('licenseplate', '=', $licenseplate)->get();
+                    
+                }else{
+                    $response = [
+                        'result' => "Licenseplate was not inside"
+                    ];
+                    error_log("Licenseplate was not inside");
+                    return response($response); 
+                }
+                
+            } else{
+
+                $response = [
+                    'result' => "Unauthorized"
+                ];
+                error_log("Unauthorized");
+                return response($response, 401); 
+            }
+        }
+    }
+
 }
