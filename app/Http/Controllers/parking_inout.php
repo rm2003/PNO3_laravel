@@ -57,18 +57,36 @@ class parking_inout extends Controller
                     //TODO:nog maken dat ook alleen kan als je gereserveerd hebt
                     //$info_about_user = Users::where('email', '=', $email)->get();
                     //$licenseplate = $info_about_user[0]['licenseplate'];
+                    $date_for_check = date('d-m-y H', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
+                    if(reservations::where('licenseplate', '=', $licenseplate)->where('reservation_slot', '=', $date_for_check)->exists()){
+                        $entering = new checkedinlp;
+                        $entering->licenseplate = $licenseplate;
+                        $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
+                        $entering->time_entered = $date;
+                        $entering->save();
+                        
+                        $response = [
+                            'result' => "Entering is allowed"
+                        ];
 
-                    $entering = new checkedinlp;
-                    $entering->licenseplate = $licenseplate;
-                    $date = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
-                    $entering->time_entered = $date;
-                    $entering->save();
-                }
-                $response = [
-                    'result' => "Entering is allowed"
-                ];
-                error_log("Entering is allowed");
-                return response($response, 202);
+                        error_log("Entering is allowed");
+                        return response($response, 202); 
+                    } else{
+                        $response = [
+                            'result' => "Entering is not allowed"
+                        ];
+                        
+                        error_log("You have not reserved on this timeslot");
+                        return response($response, 403); 
+                    }
+                    
+                }else{
+                    $response = [
+                        'result' => "Entering is not allowed"
+                    ];
+                    
+                    error_log("Entering is allowed, please reserve first");
+                    return response($response, 403); 
             } else{
 
                 $response = [
@@ -114,10 +132,35 @@ class parking_inout extends Controller
             error_log($licenseplate);
             if(strlen($licenseplate) == 9){
                 error_log("plaats3");
-                //Check if the user was logged in
+
                 if(checkedinlp::where('licenseplate', '=', $licenseplate)->exists()){
-                    $time_entered = checkedinlp::where('licenseplate', '=', $licenseplate)->get();
+
+                    $info_about_entering = checkedinlp::where('licenseplate', '=', $licenseplate)->get();
+                    $time_entered = $info_about_entering["time_entered"];
+                    $time_left = date('d-m-y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
                     
+                    $info_about_user = Users::where('licenseplate', '=', $licenseplate)->get();
+                    $email = $info_about_user['email'];
+
+                    $history = new history;
+                    $history->email = $email;
+                    $history->licenseplate = $licenseplate;
+                    $history->time_entered = $time_entered;
+                    $history->time_left = $time_left;
+                    //TODO: price generator + extra fee if overtime etc
+                    //With multiple prices?
+                    $hourdiff = round((strtotime($time_left) - strtotime($time_entered))/3600, 1);
+                    $price_per_hour = 5;
+                    $history->price = $hourdiff * $price_per_hour;
+                    $history->payed = "NO";
+                    $history->save();
+
+                    $response = [
+                        'result' => "Leaving is allowed"
+                    ];
+                    error_log("Leaving is allowed");
+                    return response($response, 202); 
+
                 }else{
                     $response = [
                         'result' => "Licenseplate was not inside"
