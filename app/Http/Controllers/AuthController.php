@@ -179,7 +179,8 @@ class AuthController extends Controller
             //if everything went correctly return that is was succesful with the token
             $response = [
                 'result' => "Registered successfully",
-                'token' => $token
+                'token' => $token,
+                'email' => $reqContent['email']
             ];
                 
             return response($response, 201);
@@ -272,7 +273,8 @@ class AuthController extends Controller
             //if everything went correct, return the token 
             $response = [
                 'result' => "Logged in successfully",
-                'token' => $token
+                'token' => $token,
+                'email' => $email
             ];
             return response($response, 200);
 

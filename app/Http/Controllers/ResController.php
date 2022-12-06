@@ -26,7 +26,7 @@ class ResController extends Controller
         error_log("CHECHK AVAILIBILITY");
         //Decode the json request
         $reqContent = json_decode($request->getContent(), true);
-        
+        error_log("IK SNAP ER GEEN HOL VAN");
 
         $rules = [
             'token' => 'required|string',
@@ -44,7 +44,7 @@ class ResController extends Controller
 
             $token = $reqContent['token'];
             $email = $reqContent['email'];
-
+            error_log($email);
             //checks if the token is still valid and only then gives back the request
             $token_validation = app('App\Http\Controllers\request_validation')->token_validation($token, $email);
             if($token_validation = "Request validated"){
@@ -79,8 +79,9 @@ class ResController extends Controller
                 return respons($result, 401);
             }
         } else{
+            error_log("Please fill in all fields");
             $result = [
-                'result' => "Pleas fill in all fields"
+                'result' => "Please fill in all fields"
             ];
             return response($result, 400);
         }

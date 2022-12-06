@@ -29,7 +29,7 @@ Route::post("login", [AuthController::class, 'login']);
 Route::post("register", [AuthController::class, 'register']);
 Route::post("logout", [AuthController::class, 'logout']);
 Route::post("add", [postrequests::class, 'add']);
-Route::post("check_availibility", [ResController::class, 'check_availibility']);
+Route::post("check_availability", [ResController::class, 'check_availibility']);
 Route::post("reserve", [ResController::class, 'reserve']);
 Route::post("driving_in", [parking_inout::class, 'driving_in']);
 
