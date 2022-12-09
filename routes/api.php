@@ -6,6 +6,7 @@ use App\Http\Controllers\postrequests;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ResController;
 use App\Http\Controllers\parking_inout;
+use App\Http\Controllers\HistCont;
 use App\Models\Users;
 
 /*
@@ -33,6 +34,7 @@ Route::post("check_availability", [ResController::class, 'check_availibility']);
 Route::post("reserve", [ResController::class, 'reserve']);
 Route::post("driving_in", [parking_inout::class, 'driving_in']);
 Route::post("driving_out", [parking_inout::class, 'driving_out']);
+Route::post("get_history", [HistCont::class, 'get_history']);
 
 
 

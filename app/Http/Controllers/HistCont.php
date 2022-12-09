@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\history;
 
+use Validator;
+
 class HistCont extends Controller
 {
     public function get_history(Request $request){
@@ -30,7 +32,21 @@ class HistCont extends Controller
 
         $token_validation = app('App\Http\Controllers\request_validation')->token_validation($token, $email);
         if($token_validation = "Request validated"){
-            list_histories_users = history::where('email', '=', $email)->get();
+            $list_histories_users = history::where('email', '=', $email)->get();
+            
+            $result = [
+                'result' => $list_histories_users
+            ];
+            error_log($list_histories_users);
+            
+            return response($result, 202);
+
+        } else{
+
+            $result = [
+                'result' => $token_validation
+            ];
+            return respons($result, 401);
         }
 
     }

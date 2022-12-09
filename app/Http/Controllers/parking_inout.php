@@ -138,14 +138,14 @@ class parking_inout extends Controller
             error_log("plaats3");
 
             if(checkedinlp::where('licenseplate', '=', $licenseplate)->exists()){
-
+                error_log("plaats4");
                 $info_about_entering = checkedinlp::where('licenseplate', '=', $licenseplate)->get();
                 $time_entered = $info_about_entering[0]["time_entered"];
                 $time_left = date('d-m-Y H:i:s', strtotime('+ 1 hours')); //+1hour because date is in gmt, so plus 1 hour is our winter hour (time used when made)
                     
                 $info_about_user = Users::where('licenseplate', '=', $licenseplate)->get();
                 $email = $info_about_user[0]['email'];
-
+                
                 $history = new history;
                 $history->email = $email;
                 $history->licenseplate = $licenseplate;
