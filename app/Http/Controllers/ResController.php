@@ -201,7 +201,7 @@ class ResController extends Controller
             }
         } else{
             $result = [
-                'result' => "Pleas fill in all fields"
+                'result' => "Please fill in all fields"
             ];
             return response($result, 400);
         }
