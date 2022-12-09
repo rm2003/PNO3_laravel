@@ -235,8 +235,9 @@ class AuthController extends Controller
 
         //Get all the info about the user, so we can later get the password
         $info_over_user = Users::where('email',$email)->get();
-        error_log($info_over_user);
+        $licenseplate = $info_over_user[0]["licenseplate"];
 
+        //Check if the password in the database matches the password given by the user
         if(error_log($info_over_user[0]["password"]) == $hashed_password){            
 
             //create a variable to check later some rules on it
@@ -274,14 +275,14 @@ class AuthController extends Controller
             $response = [
                 'result' => "Logged in successfully",
                 'token' => $token,
-                'email' => $email
+                'email' => $email,
+                'licenseplate' => $licenseplate
             ];
             return response($response, 200);
 
     }else{
         $response = [
-            'result' => "Logged in failed: password is incorrect",
-            'token' => "abc"
+            'result' => "Logged in failed: password is incorrect"
         ];
         return response($response, 401);
 

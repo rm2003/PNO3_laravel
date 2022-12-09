@@ -23,10 +23,9 @@ class ResController extends Controller
     //function that gets 5 dates+time and gives back how many reservations there are
     public function check_availibility(Request $request)
     {
-        error_log("CHECHK AVAILIBILITY");
+        error_log("CHECK AVAILIBILITY");
         //Decode the json request
         $reqContent = json_decode($request->getContent(), true);
-        error_log("IK SNAP ER GEEN HOL VAN");
 
         $rules = [
             'token' => 'required|string',
@@ -100,14 +99,14 @@ class ResController extends Controller
         $rules = [
             'token' => 'required|string',
             'email' => 'required|string',
-            'begin_uur' => 'required|string',
-            'begin_dag' => 'required|string',
-            'begin_maand' => 'required|string',
-            'begin_jaar' => 'required|string',  
-            'eind_uur' => 'required|string',  
-            'eind_dag' => 'required|string',      
-            'eind_maand' => 'required|string',  
-            'eind_jaar' => 'required|string',  
+            'begin_hour' => 'required|string',
+            'begin_day' => 'required|string',
+            'begin_month' => 'required|string',
+            'begin_year' => 'required|string',  
+            'end_hour' => 'required|string',  
+            'end_day' => 'required|string',      
+            'end_month' => 'required|string',  
+            'end_year' => 'required|string',  
             ];
 
         $validator = Validator::make($reqContent, $rules);
@@ -119,57 +118,61 @@ class ResController extends Controller
 
             $token_validation = app('App\Http\Controllers\request_validation')->token_validation($token, $email);
             if($token_validation = "Request validated"){
-                $begin_uur = $reqContent['begin_uur'];
-                $begin_dag = $reqContent['begin_dag'];
-                $begin_maand = $reqContent['begin_maand'];
-                $begin_jaar = $reqContent['begin_jaar'];
+                $begin_hour = $reqContent['begin_hour'];
+                $begin_day = $reqContent['begin_day'];
+                $begin_month = $reqContent['begin_month'];
+                $begin_year = $reqContent['begin_year'];
 
-                $eind_uur = $reqContent['eind_uur'];
-                $eind_dag = $reqContent['eind_dag'];
-                $eind_maand = $reqContent['eind_maand'];
-                $eind_jaar = $reqContent['eind_jaar'];
+                $end_hour = $reqContent['end_hour'];
+                $end_day = $reqContent['end_day'];
+                $end_month = $reqContent['end_month'];
+                $end_year = $reqContent['end_year'];
 
-
-         
-
-
-
-                $date_start = strtotime("$begin_jaar-$begin_maand-$begin_dag $begin_uur:00:00");
-                $date_end = strtotime("$eind_jaar-$eind_maand-$eind_dag $eind_uur:00:00");
+                
+                $date_start = strtotime("$begin_year-$begin_month-$begin_day $begin_hour:00:00");
+                $date_end = strtotime("$end_year-$end_month-$end_day $end_hour:00:00");
                 $diff_hours = ($date_end - $date_start)/(3600);
                 error_log($diff_hours);
 
                 $list_with_dates = array();
 
-                $date_for_dividation = $date_start;
-
+                $date_for_dividation = "$begin_day-$begin_month-$begin_year $begin_hour:00:00";
+                array_push($list_with_dates, "$begin_day-$begin_month-$begin_year $begin_hour");
+                $diff_hours = $diff_hours - 1;
+                
+                error_log($date_for_dividation);
+                
                 //every hour between start and end date will be set in an array ($list_with_dates)
-                while($diff_hours >= 1){
-                    $diff_hours = $diff_hours - 1;
+                while($diff_hours >= 1){    
 
                     //we will work with 2 types, 
                     //date for dividation is where is worked with, this is because strtotime +hour needs the minutes to see the hour as hour
                     //but we will not store in de database the minutes, only the hour, therefore is worked with the variable data for database
-                    $date_for_dividation = date('Y-m-d H:i:s', strtotime($date_for_dividation. ' + 1 hours'));
-                    $date_for_database = date('Y-m-d H', strtotime($date_for_dividation. ' + 1 hours'));
-
+                    $date_for_dividation = date('d-m-Y H:i:s', strtotime($date_for_dividation. ' + 1 hours'));
+                    $date_for_database = date('d-m-Y H', strtotime($date_for_dividation));
+                    error_log("date for dividation");
+                    error_log($date_for_dividation);
+                    error_log("date for database");
+                    error_log($date_for_database);
                     //the dates will be added to the array
                     array_push($list_with_dates, $date_for_database);
+                    $diff_hours = $diff_hours - 1;
                 
                 }
                 error_log(gettype($list_with_dates));
             
 
                 //this is the max places in the parking lot
-                $max_places = 5;
+                $max_places = 3;
 
                 //first there will be checked that there is still place availible in the parkin lot
                 //if not give back that there is no place in one or more of the timeslots
                 foreach($list_with_dates as $datum){
                     if(reservations::where('reservation_slot', '=', $datum)->get()->count() >= $max_places){
                         $result = [
-                            'response' => "one or more timeslots not available"
+                            'result' => "one or more timeslots not available"
                         ];
+                        error_log("One or more timeslots not abailable");
                         return response($result);
                     }
                 }
@@ -189,20 +192,23 @@ class ResController extends Controller
 
                 //to let the user know the reservation is done, sent the confirmation back
                 $result = [
-                    'response' => "reservation succesfully made"
+                    'result' => "reservation successfully made"
                 ];
+                error_log("reservation successfully made");
                 return response($result, 200);
         
             } else {
                 $result = [
-                    'response' => $token_validation
+                    'result' => $token_validation
                 ];
+                error_log("probleem met token");
                 return respons($result, 401);
             }
         } else{
             $result = [
                 'result' => "Please fill in all fields"
             ];
+            error_log("please fill in all fields");
             return response($result, 400);
         }
 
