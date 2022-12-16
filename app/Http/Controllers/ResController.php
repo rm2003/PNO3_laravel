@@ -27,6 +27,7 @@ class ResController extends Controller
         //Decode the json request
         $reqContent = json_decode($request->getContent(), true);
 
+        //rules to see if token, email and timestamp is in the json and is a string
         $rules = [
             'token' => 'required|string',
             'email' => 'required|string',
@@ -36,9 +37,12 @@ class ResController extends Controller
             //'timestamp4' => 'required|string',  
             //'timestamp5' => 'required|string'
             ];
-
+        
+        //validatet the rules on the request
         $validator = Validator::make($reqContent, $rules);
 
+        //If the validator passes, which means the rules were okay, then go further
+        //else say not all fields were filled in and ask to fill them in
         if ($validator->passes() ) {
 
             $token = $reqContent['token'];
@@ -54,6 +58,7 @@ class ResController extends Controller
                 //$timestamp4 = $reqContent['timestamp4'];
                 //$timestamp5 = $reqContent['timestamp5'];
 
+                //get the amount of reservations on the given timeslot
                 $count1 = reservations::where('reservation_slot', '=', $timestamp1)->get()->count();
                 error_log($count1);
                 //$count2 = reservations::where('reservation_slot', '=', $timestamp2)->get()->count();
@@ -61,6 +66,7 @@ class ResController extends Controller
                 //$count4 = reservations::where('reservation_slot', '=', $timestamp4)->get()->count();
                 //$count5 = reservations::where('reservation_slot', '=', $timestamp5)->get()->count();
 
+                //Return the result
                 $result = [
                     'result' => $token_validation,
                     'timestamp1' => $count1
@@ -96,6 +102,7 @@ class ResController extends Controller
         error_log($request);
         $reqContent = json_decode($request->getContent(), true);
         
+        //set rules to check if all the the required 
         $rules = [
             'token' => 'required|string',
             'email' => 'required|string',
