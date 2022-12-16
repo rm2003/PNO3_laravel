@@ -19,11 +19,8 @@ use App\Models\Users;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//Here are the incomming requests defined, first the name in the URL and sent to the correct controller, secondly
 
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 //Public routes
 Route::post("login", [AuthController::class, 'login']);
@@ -39,22 +36,25 @@ Route::post("get_history", [HistCont::class, 'get_history']);
 
 
 
-
+//Not used in the final design, but kept if want to improve in the future
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 //Protected routes
 //routes in here are protected, if you want normal post request, you get 'unauthenticated' message back
-Route::group(['middleware' => ['auth:sanctum']], function () {
+//Route::group(['middleware' => ['auth:sanctum']], function () {
     
-    Route::post('/test', function () {
+//    Route::post('/test', function () {
 
         //$test = Users::all();
         //$test = Users::orderBy('licenseplate', 'desc')->get();
         //$test = Users::where('UserId', '5')->get();
     
-        return "test";
+//        return "test";
         //return $test;
        // return view('test', );
-    });
+//    });
     
     
 
-});
+//});

@@ -10,6 +10,7 @@ use Validator;
 class HistCont extends Controller
 {
     public function get_history(Request $request){
+        error_log("GET HISTORY");
         $reqContent = json_decode($request->getContent(), true);
 
         $rules = [
@@ -26,7 +27,7 @@ class HistCont extends Controller
             error_log("Please fill in all fields ");
             return response($response, 400);
         }
-
+        error_log("valid request");
         $token = $reqContent['token'];
         $email = $reqContent['email'];
 
@@ -37,7 +38,8 @@ class HistCont extends Controller
             $result = [
                 'result' => $list_histories_users
             ];
-            error_log($list_histories_users);
+            error_log("normaal alles goed");
+            error_log(gettype($list_histories_users));
             
             return response($result, 202);
 
